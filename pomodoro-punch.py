@@ -15,7 +15,7 @@ from optparse import OptionParser
 
 pomo_duration = 25                    # duration of one pomodoro (in minutes)
 break_duration = 5                    # break duration (in minutes)
-punch_cmd = '~/tools/punch/Punch.py'  # punch.py shell command
+punch_cmd = '/usr/bin/python /home/chyyuu/tools/punch-master/Punch.py'  # punch.py shell command
 
 version = """Pomodoro punch"""
 usage = """Usage:
@@ -55,16 +55,24 @@ class Pomodoro(object):
         # TODO: this is not the best command
         subprocess.Popen(['ogg123', '-qy 10',
                           '/usr/share/sounds/gnome/default/alerts/sonar.ogg'])
-
+    def play_shortsound(self):
+        """Play sound (as separate process)."""
+        # TODO: this is not the best command
+        subprocess.Popen(['ogg123', '-qy 1',
+                          '/usr/share/sounds/gnome/default/alerts/drip.ogg'])
+                          
     def pomodoro(self):
         """Run one pomodoro."""
         self.notify('Pomodoro started!',
-                    'You have only %s minutes.' % pomo_duration)
+                    'You have only %d minutes.' % pomo_duration)
         for i in range(pomo_duration):
             # 'cls' for windows 'clear' for Linux and Mac
             os.system('cls' if os.name == 'nt' else 'clear')
             print 'Minutes left:', pomo_duration - i
             time.sleep(60)
+            self.play_shortsound()
+            if i % 10 == 0:
+            	self.notify('Pomodoro running!', 'You have only %d minutes.' % (pomo_duration-i-1))
         self.notify('Pomodoro ended!',
                     'Take %s minutes break.' % break_duration)
         self.play_sound()
