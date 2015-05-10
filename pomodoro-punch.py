@@ -30,19 +30,30 @@ class Pomodoro(object):
         self.punched_in = False
 
     def execute(self):
-        """Execute pomodoro workflow."""
-        # if punch command is 'in' punch in
-        if self.task_command == 'in':
-            self.punch_in(self.task_id)
-            time.sleep(5)
-            self.pomodoro()
-            self.punch_out()
-        elif self.task_command == 'pomo':
-            self.pomodoro()
-        elif self.task_command == 'help':
-            print usage
-        else:
-            print usage
+    	cont_str="y"
+        while(cont_str=="y"):
+		    """Execute pomodoro workflow."""
+		    # if punch command is 'in' punch in
+		    if self.task_command == 'in':
+		        self.punch_in(self.task_id)
+		        time.sleep(1)
+		        self.pomodoro()
+		        self.punch_out()
+		    elif self.task_command == 'pomo':
+		        self.pomodoro()
+		    elif self.task_command == 'help':
+		        print usage
+		        break
+		    else:
+		        print usage
+		        break
+		    os.system('clear')
+		    print "break time %d minutes" % break_duration
+		    time.sleep(60*break_duration)
+		    self.play_shortsound()
+		    os.system('clear')
+		    cont_str=raw_input("Continue?")
+		   
         self.finish()
 
     def notify(self, title, body):
@@ -53,7 +64,7 @@ class Pomodoro(object):
     def play_sound(self):
         """Play sound (as separate process)."""
         # TODO: this is not the best command
-        subprocess.Popen(['ogg123', '-qy 10',
+        subprocess.Popen(['ogg123', '-qy 6',
                           '/usr/share/sounds/gnome/default/alerts/sonar.ogg'])
     def play_shortsound(self):
         """Play sound (as separate process)."""
@@ -67,11 +78,11 @@ class Pomodoro(object):
                     'You have only %d minutes.' % pomo_duration)
         for i in range(pomo_duration):
             # 'cls' for windows 'clear' for Linux and Mac
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('clear')
             print 'Minutes left:', pomo_duration - i
             time.sleep(60)
             self.play_shortsound()
-            if i % 10 == 0:
+            if i % 5 == 0:
             	self.notify('Pomodoro running!', 'You have only %d minutes.' % (pomo_duration-i-1))
         self.notify('Pomodoro ended!',
                     'Take %s minutes break.' % break_duration)
